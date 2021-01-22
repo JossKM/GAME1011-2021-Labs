@@ -87,39 +87,47 @@ double radiiArray[] = { 0.0, 5.0, 2.0 };
 
 int main()
 {
-	std::cout << "Circles\n";
-	std::cout << g_Circle0.getArea() << std::endl;
-	std::cout << g_Circle1.getArea() << std::endl;
-	std::cout << g_Circle2.getArea() << std::endl;
+	//std::cout << "Circles\n";
+	//std::cout << g_Circle0.getArea() << std::endl;
+	//std::cout << g_Circle1.getArea() << std::endl;
+	//std::cout << g_Circle2.getArea() << std::endl;
+	//
+	//std::cout << "Array\n";
+	//std::cout << &radiiArray[0] << std::endl; //[] array access by index (offsets the pointer by the number entered * size of the data type
+	//std::cout << &radiiArray[1] << std::endl;
+	//std::cout << &radiiArray[2] << std::endl;
+	//
+	//radii = new double[3]{ 0.0, 5.0, 2.0 };
+	//std::cout << "Dynamic Array\n";
+	//std::cout << radii[0] << std::endl; //[] array access by index (offsets the pointer by the number entered * size of the data type
+	//std::cout << radii[1] << std::endl;
+	//std::cout << radii[2] << std::endl;
+	//
+	//
+	//for (int i = 0; i < 3; i++)
+	//{
+	//	double element = radii[i];
+	//	double* elementPointer = &element;
+	//
+	//	delete elementPointer;
+	//}
+	//radii = nullptr;
+	//
+	//Circle* pMyDynamicCircle = new Circle(4.0); // allocate memory for a Circle, store address in a pointer variable (pointer is allocated on the stack)
+	//// Pointer goes out of scope!!!
+	//
+	//delete pMyDynamicCircle;
+	//pMyDynamicCircle = nullptr;
+	//
+	//std::getchar(); //Similar to System("Pause") but more robust
 
-	std::cout << "Array\n";
-	std::cout << &radiiArray[0] << std::endl; //[] array access by index (offsets the pointer by the number entered * size of the data type
-	std::cout << &radiiArray[1] << std::endl;
-	std::cout << &radiiArray[2] << std::endl;
 
-	radii = new double[3]{ 0.0, 5.0, 2.0 };
-	std::cout << "Dynamic Array\n";
-	std::cout << radii[0] << std::endl; //[] array access by index (offsets the pointer by the number entered * size of the data type
-	std::cout << radii[1] << std::endl;
-	std::cout << radii[2] << std::endl;
-
-
-	for (int i = 0; i < 3; i++)
+	while (true)
 	{
-		double element = radii[i];
-		double* elementPointer = &element;
-
-		delete elementPointer;
+		int* a = new int(5);
+		a += 4;
 	}
-	radii = nullptr;
 
-	Circle* pMyDynamicCircle = new Circle(4.0); // allocate memory for a Circle, store address in a pointer variable (pointer is allocated on the stack)
-	// Pointer goes out of scope!!!
-
-	delete pMyDynamicCircle;
-	pMyDynamicCircle = nullptr;
-
-	std::getchar(); //Similar to System("Pause") but more robust
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
@@ -132,3 +140,5 @@ int main()
 //   4. Use the Error List window to view errors
 //   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
 //   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+
+
