@@ -31,14 +31,14 @@ public:
 	}
 
 	// Copy constructor. Called when we create a Document based on another
-	Document(Document& other)
+	Document(const Document& other)
 	{
+		Cleanup();
 		m_size = other.m_size; // copying this is ok
 
 		// what happens by default; which is not ideal, 
 		//and causes lots of issues including our double-delete crash
 		//m_pData = other.m_pData; 
-
 		m_pData = new char[m_size];
 
 		//SetAllData(*other.m_pData); // copy the first element of other into all of ours.... which is technically ok for now, but not ideal
@@ -140,7 +140,7 @@ int main()
 {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Example 1: Crating and printing a document normally
+	// Example 1: Creating and printing a document normally
 	{
 		std::cout << "\n======================== Example 1: Constructing and Printing ========================\n" << std::endl;
 
