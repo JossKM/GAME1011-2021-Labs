@@ -42,6 +42,11 @@
 //2. Document + string (make it return a Document)
 //Hint: Document operator+( const Document& s1, const std::string& s2 )
 
+//Desired behavior: 
+//if A is "hello" and B is " world" 
+//then A + B should return "hello world"
+//B + A should return " worldhello" 
+// should be able to print "hello" + <some document here>
 
 
 
@@ -118,9 +123,113 @@ public:
 
 	~Document()
 	{
+		CleanupData();
 	}
 
-};
+	///////////////////////////////////////////////////////
+	// Lab 3 code
+	///////////////////////////////////////////////////////
+
+
+	//Operator overload for assignment operator '='
+	void operator=(const Document &valueToAssign)
+	{
+		// When we use = we want to assign the left side to have the data of the right side.
+		// So, a document A with "Hello" can be assigned the value of document B with "Hi"
+		// Then, A would have "Hi"
+		// We should also be able to change B without changing A.
+		// If we then reassign B to "Howdy" we do NOT expect A to also say "Howdy". We expect it to still say "Hi"
+
+		// char* m_pData; 
+		// size_t m_size;
+
+		//What normally happens in =
+		//m_pData = valueToAssign.m_pData; // this is not ok for us. We don't want a copy of the pointer. We want a copy of the data
+		m_size = valueToAssign.m_size; // copying size is ok
+
+		delete[] m_pData; // we need to clean up the data before we replace it. Don't want to leave orphans... therefore. we DESTROY IT
+		m_pData = new char[valueToAssign.m_size]; // create a new block of memory for the copy
+
+		//copy all the data!
+		for (size_t i = 0; i < m_size; i++)
+		{
+			m_pData[i] = valueToAssign.m_pData[i];
+		}
+
+	}
+
+
+	// Type Conversion from Document to std::string
+	operator std::string() const
+	{
+		std::string convertedString;
+		convertedString.resize(m_size);
+
+		for (size_t i = 0; i < m_size; i++)
+		{
+			convertedString[i] = m_pData[i];
+		}
+
+		return convertedString;
+	}
+
+	// Constructor of document with string, also serves as type conversion
+	Document(const std::string &value)
+	{
+		m_size = value.length();
+		m_pData = new char[m_size];
+
+		for (size_t i = 0; i < m_size; i++)
+		{
+			m_pData[i] = value[i];
+		}
+	}
+
+	void operator +=(const std::string& rhs)
+	{
+		// Solution A: copy everyithing!
+
+		//copy our old data
+		std::string oldData = static_cast<std::string>(*this);
+		CleanupData(); // clear memory
+
+		//make new space for larger size (size of both combined)
+		m_size = oldData.length() + rhs.length();
+		m_pData = new char[m_size];
+		
+		// add in old data
+		for (size_t i = 0; i < oldData.length() ; i++)
+		{
+			m_pData[i] = oldData[i];
+		}
+
+		// add in new data
+		for (size_t i = 0; i < rhs.length(); i++)
+		{
+			m_pData[i + oldData.length()] = rhs.at(i);
+		}
+
+	}
+
+}; // End of Document
+
+Document operator+(const std::string &lhs, const Document &rhs)
+{
+	std::string concatenated = lhs + static_cast<std::string>(rhs);
+	return static_cast<Document>(concatenated);
+}
+
+Document operator+(const Document &lhs, const std::string& rhs)
+{
+	std::string concatenated = static_cast<std::string>(lhs) + rhs;
+	return static_cast<Document>(concatenated);
+}
+
+std::ostream& operator<<(std::ostream& out, Document& toPrint)
+{
+	return out << static_cast<std::string>(toPrint);
+}
+
 
 
 class DocumentReader
@@ -141,12 +250,30 @@ public:
 
 int main()
 {
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Example 2: memberwise copy (assignment operator) with a memory leak and funky behaviour
-	{
-		std::cout << "\n======================== Example: Memberwise Assignment (MEMORY LEAK) ========================\n" << std::endl;
+	// Example of Double-Delete problem
+	//int* aPtr = new int(50);
+	//int* bPtr = new int(40);
+	//std::cout << "address of a: " << aPtr << std::endl;
+	//std::cout << "address of b: " << bPtr << std::endl;
 
+	//std::cout << "assigning b the value of a" << std::endl;
+	//bPtr = aPtr;
+	//// what happened to the data at b? It's leaked. Gone. "Orphaned"
+
+	//std::cout << "address of a: " << aPtr << std::endl;
+	//std::cout << "address of b: " << bPtr << std::endl;
+
+	//std::cout << "deleting a" << std::endl;
+	//delete aPtr; // free the memory at a's pointed address so other applications can use it.
+	//aPtr = nullptr;
+	//delete aPtr; // deleting nullptr is ok.
+
+	//std::cout << "deleting b" << std::endl;
+	//delete bPtr; // deleting already deleted memory is NOT OK because someone else might be using it
+	//bPtr = nullptr;
+
+	
+	{
 		Document doc(16, 'L');
 		std::cout << "\nContents of doc at creation" << std::endl;
 		DocumentReader::PrintDocumentToConsole(doc);
@@ -156,23 +283,10 @@ int main()
 		std::cout << "\nContents of docMemberwise at creation" << std::endl;
 		DocumentReader::PrintDocumentToConsole(docMemberwise);
 
-		// This is memberwise assignment. Not a constructor!
-		// C++ doesn't think it needs new memory for new Documents
-		// It's trying to just copy them in place using the default behaviour of the assignment operator '=' 
 		docMemberwise = doc;
-		// Now, docMemberwise's m_pData pointer is a copy of doc's m_pData pointer. They point to the same data.
-		// docMemberwise's old pointer is gone, which means the memory it used to point to (all the 'Q')s are lost as well.
-		// Even though nobody knows where the Q's are stored anymore, your computer also doesn't know it's free to use
-		// Those Q's are now taking up space in RAM, even though nobody can use them or delete them
-		// this is a memory leak
-		// Fixes for the leak could be... 
-				//A: override the assignment operator '=' to do what we expect instead, and make sure there are no memory leaks
-				//B: don't use the assignment operator (not ideal, since anyway may accidentally use it and create a leak)
-				//C: refactor the Document class to use something safer than a raw pointer, like a Smart Pointer
-
+	
 		std::cout << "\nAssigning data in doc (but NOT docMemberwise)..." << std::endl;
 
-		// If we modify the data in doc, we are telling it to change the stuff at the address its m_pData pointer points to.
 		doc.SetAllData('g');
 		std::cout << "\nContents of doc" << std::endl;
 		DocumentReader::PrintDocumentToConsole(doc);
@@ -182,10 +296,41 @@ int main()
 		std::cout << "\nContents of docMemberwise" << std::endl;
 		DocumentReader::PrintDocumentToConsole(docMemberwise);
 
-		//doc.CleanupData(); // we can clean up the memory that doc and docMemberwise point to: the 'g's
-		// but we can never clean up the memory we already leaked. Those 'Q's are gone forever
-
 		getchar(); // "wait for user to enter any character". It returns the character entered, but can also be used similar to System("Pause")
 	}
+
+	{
+		std::cout << "\n======= Example: Conversion ========" << std::endl;
+		Document doc = Document(15, 'w');
+
+		// assignment operator for string = Document does not exist.
+		// compiler looks for alternatives. It finds it can do string = string, and it finds that it can convert doc to string!
+		// So it assumes that is what we mean. This is called an implicit cast
+		std::string strConvertedFromDoc = static_cast<std::string>(doc);
+
+		// we know we can cout a string. That means std::string has an overload for the << operator
+		std::cout << strConvertedFromDoc << std::endl;
+	}
+
+	{
+		std::cout << "\n======= Example: Overloading + ========" << std::endl;
+		Document doc = Document(3, 'n');
+
+		std::string toConcatenate = "wi";
+
+		std::cout << static_cast<std::string>(toConcatenate + doc) << std::endl;
+
+		std::cout << "\n======= Example: Overloading += ========" << std::endl;
+
+		Document doc2 = Document("hello ");
+		doc2 += "world";
+
+		std::cout << static_cast<std::string>(doc2) << std::endl;
+
+
+		std::cout << "\n======= Example: Overloading << ========" << std::endl;
+		std::cout << doc2 << std::endl;
+	}
+
 	getchar();
 }
