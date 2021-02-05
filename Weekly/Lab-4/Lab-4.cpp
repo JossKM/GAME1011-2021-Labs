@@ -67,7 +67,7 @@ virtual destructor
 ////////////////////////////////////////////////////////////////
 
 #include <iostream>
-
+#include <string>
 
 class GameActor
 {
@@ -152,8 +152,7 @@ public:
 
 int main()
 {
-	const int kNumGameActorsMax = 50000;
-
+	const int kNumGameActorsMax = 22000;
 
 	GameActor* world[kNumGameActorsMax] = {nullptr};
 
@@ -161,13 +160,13 @@ int main()
 	world[1] = new GameActor("Darth Vader");
 	world[2] = new GameActorDrawable("Obi-Wan");
 
-	std::cout << "Press any key to instantiate 40,000 GameActorDrawables and place them in our world" << std::endl;
+	std::cout << "Press any key to instantiate many GameActorDrawables and place them in our world" << std::endl;
 	getchar();
 
 	//Let's make things crazy by instantiating a LOT of new objects...
 	//Hint: See memory usage with Debug -> Windows -> Show Diagnostic Tools
 	//https://docs.microsoft.com/en-us/visualstudio/profiling/memory-usage?view=vs-2019
-	for (int iDrawable = 0; iDrawable < 40000; iDrawable++)
+	for (int iDrawable = 0; iDrawable < 20000; iDrawable++)
 	{
 		// Find the first empty slot
 		for (int i = 0; i < kNumGameActorsMax; i++)
@@ -176,9 +175,11 @@ int main()
 			GameActor* pActor = world[i];
 			if (pActor == nullptr)
 			{
-				// Add a new GameActorDrawable to it!!!
-				pActor = new GameActorDrawable("C3PO # " + iDrawable);
+				// Add a new GameActorDrawable to it!
+				std::string name = "C3PO # " + std::to_string(iDrawable + 1);
+				pActor = new GameActorDrawable(name);
 				world[i] = pActor;
+				break; // exit the loop to find a slot
 			}
 		}
 	}
