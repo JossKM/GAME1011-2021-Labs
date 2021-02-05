@@ -330,6 +330,16 @@ int main()
 
 		std::cout << "\n======= Example: Overloading << ========" << std::endl;
 		std::cout << doc2 << std::endl;
+
+
+		//Print numbers 0-9
+		int i = 0;
+		while (i < 10);
+		{
+			std::cout << i << std::endl;
+			i++;
+		}
+
 	}
 
 	getchar();
