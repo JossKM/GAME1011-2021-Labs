@@ -28,18 +28,18 @@ auto
 // The function should satisfy that Lerp(A,B,0) = A, and Lerp(A,B,1) = B. Lerp(A,B,0.5) should result in "equal weights of A and B"
 // The return type of the function should be the same as the type of A and B
 
-/////// 2: Test the Lerp function on some floats
+/////// 3: Test the Lerp function on some floats
 // Do some basic tests to ensure the Lerp is working correctly.
 
-/////// 3: Make a simple Vector2 class
+/////// 4: Make a simple Vector2 class
 // Add some basic operations
 // Vector2 + Vector2
 // Vector2 * float
 
-/////// 4: Turn the Linear Interpolation (Lerp) function into a template function
+/////// 5: Turn the Linear Interpolation (Lerp) function into a template function
 // Not every variable needs to be changed...
 
-/////// 5: Test the Lerp function on some Vector2
+/////// 6: Test the Lerp function on some Vector2
 // The same Lerp function, without any overloads, should work for
 // floats, doubles, Vector2, and anything else you throw at it which has a meaningful addition and multiplication by scalar operator
 
@@ -121,8 +121,10 @@ int main()
     auto result = Lerp(myVecA, myVecB, 0.75); // auto keyword can be used to replace the type name if you don't know or care what type you are dealing with. Generally don't use it unless you have to because it makes code less legible
     std::cout << result << std::endl; //
 
-    // Now a discussion about vectors...
+    // Now a discussion about std::vector...
     {
+        //You will be making a class similar to std::vector
+        https://www.cplusplus.com/reference/vector/vector/
         // std::vector is not to be confused with our spatial vectors from linear algebra
         // an std::vector is an implementation of an Array List. It's a List, made with an array
         // std::vector is a template class. You must specify what type it will use when making one
@@ -134,11 +136,12 @@ int main()
         myListOfVectors.push_back(myVecB); // {myVecA, myVecB}
         myListOfVectors.push_back(result); // {myVecA, myVecB, result}
 
+        myListOfVectors.size(); // size returns number of elements. At this time should be 3
         myListOfVectors[2]; // index 2 would be the accessing the third element
         
         // pop_back just removes one off the end... 
         myListOfVectors.pop_back(); // {myVecA, myVecB}
+        myListOfVectors.size(); // At this time size should be 2
 
-        myListOfVectors.size(); // size returns number of elementsa
     }
 }
