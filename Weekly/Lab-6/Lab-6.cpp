@@ -48,6 +48,18 @@ auto
 // For this, you'll want to read up on sorting algorithms. https://www.geeksforgeeks.org/sorting-algorithms/#algo
 // They can range in difficulty. Some of the easiest are Selection Sort, and Bubble Sort. Merge sort is efficient, and interesting... https://www.youtube.com/watch?v=kPRA0W1kECg
 
+// Fun sorting video: https://www.youtube.com/watch?v=kPRA0W1kECg
+
+//Ideally, for the Templates assignment, one would be able to extend the size of their SimpleVector however they want...
+// e.g. mySimpleVector.push_back(1) would always work. Would always increase the size of the array... 
+// So if you call push_back() on a SimpleVector of size 4, it will be size 5 after...
+// Could add a way for programmers to set a max size so its not reallocated every time
+// mySimpleVector.SetCapacity(100)
+// Could also automatically do it if they attempt to push_back when at max capacity
+// e.g. push_back at max capacity could prompt SimpleVector to allocate ten new spaces. Or double the capacity...
+
+
+
 #include <iostream>
 #include <assert.h>
 
@@ -169,7 +181,7 @@ public:
 int main()
 {
 	//////////// Populating our SimpleVector
-	SimpleVector<int> myClassInstance = SimpleVector<int>(8);
+	SimpleVector<int> myClassInstance = SimpleVector<int>(3);
 	myClassInstance[0] = -10;
 	myClassInstance[1] = 0;
 	myClassInstance[2] = 10;
@@ -209,15 +221,8 @@ int main()
 	std::cout << "mySearchableCopy Contents: " << mySearchableCopy << std::endl;
 	////////////
 
-
-	//Ideally, for the Templates assignment, one would be able to extend the size of their SimpleVector however they want...
-	// e.g. mySimpleVector.push_back(1) would always work. Would always increase the size of the array... 
-	// So if you call push_back() on a SimpleVector of size 4, it will be size 5 after...
-
-
 	getchar();
 }
-
 
 
 
