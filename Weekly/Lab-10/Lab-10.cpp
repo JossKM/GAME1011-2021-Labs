@@ -58,11 +58,12 @@ Iterative vs recursive
 
 
 #include <iostream>
+#include <time.h>
 
 // This code allows you to "draw" in 2D to the console window, as if they were pixels
 // This is essentially your "screen". We draw to this instead of the screen directly, then copy it to the screen when it is ready. Similar to how there is a front and back buffer in graphics.
-#define RESOLUTIONX 200
-#define RESOLUTIONY 80
+#define RESOLUTIONX 400
+#define RESOLUTIONY 200
 char printBuffer[RESOLUTIONX * RESOLUTIONY];
 #define BUFFER_AT(x, y) printBuffer[y * RESOLUTIONX + x]
 
@@ -98,9 +99,84 @@ void ClearBuffer(char clearCharacter)
 	}
 }
 
+void Loop(int times)
+{
+	if (times <= 0) // Base case: where recursion ends
+	{
+		return;
+	}
+	else
+	{
+		Loop(times - 1);
+		std::cout << times << std::endl;
+		PrintSquare('o', times * 10, 0, rand() % 5, rand() % 10);
+	}
+}
+
+void TinySquareGang(int posX, int posY, int size)
+{
+	// Base case, function returns when size is less than 1. 
+	// Important that this is always hit otherwise the function may be unstable
+	if (size < 1) 
+	{
+		return;
+	}
+	else
+	{
+		/*
+		[0][1][2]
+		[3][4][5]
+		[6][7][8]
+		*/
+
+		// Indexing a 2D position from a 1D index and a size
+		// i == 0 : position = (0 * size/3, 0 * size/3)
+		// i == 1 : position = (1 * size/3, 0 * size/3)
+		// i == 2 : position = (2 * size/3, 0 * size/3)
+		// i == 3 : position = (0 * size/3, 1 * size/3)
+		// i == 4 : position = (1 * size/3, 1 * size/3)
+		// i == 5 : position = (2 * size/3, 1 * size/3)
+		// i == 6 : position = (0 * size/3, 2 * size/3)
+
+		int shrunkSize = size / 3;
+		for (int i = 0; i < 9; i++)
+		{
+			int newSquarePosX = posX + (i % 3) * shrunkSize * 2; // posX + 1/3 size
+			int newSquarePosY = posY + (i / 3) * shrunkSize;
+
+			if (i == 4)
+			{
+				// We multiply the widths by 2 just because characters in the console window are taller than they are wide, 
+				// and we want it to look more 'square'
+				PrintSquare('X', newSquarePosX, newSquarePosY, shrunkSize * 2, shrunkSize);
+			}
+			else
+			{
+				// Recursion case
+				TinySquareGang(newSquarePosX, newSquarePosY, shrunkSize);
+			}
+		}
+	}
+}
+
+// Swap two elements in an array by index
+template<typename T>
+void Swap(T* arr, int indexA, int indexB)
+{
+	T temp = arr[indexA];
+	arr[indexA] = arr[indexB];
+	arr[indexB] = temp;
+}
+
 int main()
 {
+	srand(time(0));
+
 	ClearBuffer('.');
+	//Loop(10);
+	TinySquareGang(0, 0, 200);
+
+	std::cout << printBuffer;
 	getchar();
 	return 0;
 }
