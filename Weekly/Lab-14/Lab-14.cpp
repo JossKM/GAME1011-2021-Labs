@@ -19,7 +19,8 @@ bit masking
 // This lab, we will look at how signed and unsigned integer values are stored in memory and test some bitwise operations on them
 
 /////// 1: Setup
-// Clone the repo (https://github.com/JossKM/GAME1011-2021-Labs), set this Lab as "Startup Project", or start a new project with a main function                       
+// Clone the repo (https://github.com/JossKM/GAME1011-2021-Labs), set this Lab as "Startup Project", 
+// or start a new project with a main function                       
 
 /////// 2: Allocate some dynamic memory
 // Use new[] to allocate a dynamic array of memory, so we can examine its structure
@@ -28,7 +29,8 @@ bit masking
 // Don't forget to call delete[] later.
 
 /////// 3: Play with your calculator
-// Find a programming calculator app on your phone or computer (On Windows, the default Calculator app includes this--check the dropdown menu)
+// Find a programming calculator app on your phone or computer 
+// (On Windows, the default Calculator app includes this--check the dropdown menu)
 // Type your numbers into the calculator to see how they come up in different formats
 // If you have a 8-bit char and | (OR) it with the maximum char value of 255, what do you get?
 // If you & (AND) it with 255 what do you get?
@@ -46,8 +48,10 @@ bit masking
 // Use this view to see what is happening to the data as each operation is done.
 
 /////// 6: Create a bit-masking flag system
-// It is a common pattern in many APIs to see unsigned integer arguments passed to a function as a way of "configuring flags" in the function call.
-// For example, SLD_Init() takes flags OR'd together such as SDL_INIT_TIMER, SDL_INIT_AUDIO, and SDL_INIT_EVERYTHING - https://wiki.libsdl.org/SDL_Init
+// It is a common pattern in many APIs to see unsigned integer arguments passed to a function as a way of 
+// "configuring flags" in the function call.
+// For example, SLD_Init() takes flags OR'd together such as 
+// SDL_INIT_TIMER, SDL_INIT_AUDIO, and SDL_INIT_EVERYTHING - https://wiki.libsdl.org/SDL_Init
 // If you check the definitions of these macros in SDL.h, you will find:
 //
 #define SDL_INIT_TIMER          0x00000001u
@@ -76,6 +80,100 @@ bit masking
 
 using namespace std;
 
+typedef uint32_t MyTestingType;
+
+#define ITEM_FLAG_TRADEABLE         0x00000001
+#define ITEM_FLAG_DROPPABLE         0x00000002
+#define ITEM_FLAG_CONSUMABLE        0x00000004
+#define ITEM_FLAG_COMBINEABLE       0x00000008
+#define ITEM_FLAG_QUEST_CRITICAL    0x00000010
+#define ITEM_FLAG_NORMAL            0x00000007
+
+class Collider
+{
+    uint32_t collisionMask; // each bit represents a "layer"
+
+public:
+    bool DoesCollideWith(Collider other)
+    {
+        return collisionMask & other.collisionMask;
+    }
+};
+
+
+class Item
+{
+public:
+    Item(uint32_t flags) : itemFlags(flags)
+    {
+    }
+
+    uint32_t itemFlags;
+
+    bool IsQuestCritical()
+    {
+        return itemFlags & ITEM_FLAG_QUEST_CRITICAL;
+    }
+
+    void PrintProperties()
+    {
+        if (itemFlags & ITEM_FLAG_TRADEABLE)
+        {
+            cout << " Tradeable";
+        }
+
+        if (itemFlags & ITEM_FLAG_DROPPABLE)
+        {
+            cout << " Droppable";
+        }
+
+        if (itemFlags & ITEM_FLAG_CONSUMABLE)
+        {
+            cout << " Consumable";
+        }
+
+        if (itemFlags & ITEM_FLAG_COMBINEABLE)
+        {
+            cout << " Combineable";
+        }
+
+        if (itemFlags & ITEM_FLAG_QUEST_CRITICAL)
+        {
+            cout << " Quest_Critical";
+        }
+    }
+
+   /* bool isTradeable;
+    bool isDroppable;
+    bool isConsumable;
+    bool isCombineable;*/
+};
+
 int main()
 {
+    Item* myItem = new Item(ITEM_FLAG_NORMAL);
+    myItem->PrintProperties();
+
+
+    MyTestingType* MyDataArr = new MyTestingType[10]{0, 1, 2, 4, 16, 32, 64, 777, 0, 0};
+
+    MyTestingType* NinthElementPointer = (MyDataArr + 8); // Move pointer forward 8 places
+    *NinthElementPointer = MyDataArr[7] & MyDataArr[0]; // assing the value at the pointer to the bitwise AND of the first and 8th elements
+    *NinthElementPointer = MyDataArr[7] | MyDataArr[0];
+    *NinthElementPointer = MyDataArr[7] ^ MyDataArr[0];
+
+
+
+    getchar();
+
+    // && means Logical AND, which means, that both sides must be true. 
+    // Therefore the expression A && B is true if A is true and B is true, but false otherwise
+    // Bitwise & is similar, but instead performs the operation for each bit, and returns the result
+    // 0010
+    // AND
+    // 0110
+    // 0010
+
+    delete[] MyDataArr;
+    delete myItem;
 }
